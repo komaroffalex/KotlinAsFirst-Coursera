@@ -220,7 +220,18 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    var retVal = 0
+    for (i in 0 until str.length) {
+        retVal += if (str[i].isDigit()) {
+            str[i].toString().toInt() * Math.pow(base.toDouble(), (str.length - (i + 1)).toDouble()).toInt()
+        } else {
+            val value = 10 - (97 - str[i].toInt())
+            value * Math.pow(base.toDouble(), (str.length - (i + 1)).toDouble()).toInt()
+        }
+    }
+    return retVal
+}
 
 /**
  * Сложная
@@ -230,7 +241,39 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun Map<Int, String>.floorKey(n: Int): Int {
+    return if (n == 0) 1
+    else {
+        var closestKey = 1
+        for ((k, v) in this) {
+            if (k in closestKey..n) {
+                closestKey = k
+            }
+        }
+        closestKey
+    }
+}
+
+fun roman(n: Int): String {
+    val map = mutableMapOf<Int, String>()
+    map[1000] = "M"
+    map[900] = "CM"
+    map[500] = "D"
+    map[400] = "CD"
+    map[100] = "C"
+    map[90] = "XC"
+    map[50] = "L"
+    map[40] = "XL"
+    map[10] = "X"
+    map[9] = "IX"
+    map[5] = "V"
+    map[4] = "IV"
+    map[1] = "I"
+    val l = map.floorKey(n)
+    return if (n == l) {
+        map.getOrElse(n) { "" }
+    } else map[l] + roman(n - l)
+}
 
 /**
  * Очень сложная

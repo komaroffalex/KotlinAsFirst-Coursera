@@ -48,8 +48,8 @@ fun quadraticRootProduct(a: Double, b: Double, c: Double): Double {
  * Пример главной функции
  */
 fun main(args: Array<String>) {
-    val x1x2 = quadraticRootProduct(1.0, 13.0, 42.0)
-    println("Root product: $x1x2")
+    val result = 7 * 7
+    println("7 * 7 = $result")
 }
 
 /**
@@ -117,4 +117,9 @@ fun accountInThreeYears(initial: Int, percent: Int): Double = TODO()
  * Пользователь задает целое трехзначное число (например, 478).
  * Необходимо вывести число, полученное из заданного перестановкой цифр в обратном порядке (например, 874).
  */
-fun numberRevert(number: Int): Int = TODO()
+fun numberRevert(number: Int): Int {
+    val fstDgt = number % 10
+    val sndDgt = (floor(number / 10.0).toInt()) % 10
+    val thrdDgt = floor(number / 100.0).toInt()
+    return fstDgt * 100 + sndDgt * 10 + thrdDgt * 1
+}

@@ -74,7 +74,24 @@ fun digitNumber(n: Int): Int = TODO()
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun fib(n: Int): Int = TODO()
+fun fib(n: Int): Int {
+    val f = IntArray(n + 1)
+    var i: Int
+
+    /* 0th and 1st number of the series are 0 and 1*/
+    f[0] = 0
+    f[1] = 1
+
+    i = 2
+    while (i <= n) {
+        /* Add the previous 2 numbers in the series
+        and store it */
+        f[i] = f[i - 1] + f[i - 2]
+        i++
+    }
+
+    return f[n]
+}
 
 /**
  * Простая
@@ -82,7 +99,20 @@ fun fib(n: Int): Int = TODO()
  * Для заданных чисел m и n найти наименьшее общее кратное, то есть,
  * минимальное число k, которое делится и на m и на n без остатка
  */
-fun lcm(m: Int, n: Int): Int = TODO()
+fun lcm(m: Int, n: Int): Int {
+    if (m == 0 || n == 0) {
+        return 0
+    }
+    val absNumber1 = Math.abs(m)
+    val absNumber2 = Math.abs(n)
+    val absHigherNumber = Math.max(absNumber1, absNumber2)
+    val absLowerNumber = Math.min(absNumber1, absNumber2)
+    var lcm = absHigherNumber
+    while (lcm % absLowerNumber != 0) {
+        lcm += absHigherNumber
+    }
+    return lcm
+}
 
 /**
  * Простая
@@ -191,7 +221,9 @@ fun hasDifferentDigits(n: Int): Boolean = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun squareSequenceDigit(n: Int): Int = TODO()
+fun squareSequenceDigit(n: Int): Int {
+    TODO()
+}
 
 /**
  * Сложная
@@ -202,4 +234,28 @@ fun squareSequenceDigit(n: Int): Int = TODO()
  *
  * Использовать операции со строками в этой задаче запрещается.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun Int.length() = when(this) {
+    0 -> 1
+    else -> Math.log10(Math.abs(toDouble())).toInt() + 1
+}
+
+fun fibSequenceDigit(n: Int): Int {
+    var leng = 0
+    var iter = 1
+    while(leng < n) {
+        var num = fib(iter)
+        leng += num.length()
+        iter++
+        if (leng >= n) {
+            var diff = leng - n
+            var num_iter = num
+            var list = mutableListOf<Int>()
+            while (num_iter > 0) {
+                list.add(num_iter % 10)
+                num_iter = num_iter / 10
+            }
+            return list[diff]
+        }
+    }
+    return -1
+}
