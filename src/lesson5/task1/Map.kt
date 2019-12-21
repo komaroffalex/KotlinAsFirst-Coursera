@@ -223,7 +223,17 @@ fun canBuildFrom(chars: List<Char>, word: String): Boolean = TODO()
  * Например:
  *   extractRepeats(listOf("a", "b", "a")) -> mapOf("a" to 2)
  */
-fun extractRepeats(list: List<String>): Map<String, Int> = TODO()
+fun extractRepeats(list: List<String>): Map<String, Int> {
+    var resMap = mutableMapOf<String, Int>()
+    for (elem in list) {
+        var tempList = list.toMutableList()
+        var tempList2 = tempList.filter { it.equals(elem) }
+        if (tempList2.size > 1) {
+            resMap.put(elem, tempList2.size)
+        }
+    }
+    return resMap
+}
 
 /**
  * Средняя
@@ -253,7 +263,31 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *   findSumOfTwo(listOf(1, 2, 3), 4) -> Pair(0, 2)
  *   findSumOfTwo(listOf(1, 2, 3), 6) -> Pair(-1, -1)
  */
-fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> = TODO()
+fun findSumOfTwo(list: List<Int>, number: Int): Pair<Int, Int> {
+    for (elem in list) {
+        var tempList = list.toMutableList()
+        var indicesList = mutableListOf<Int>()
+        for (i in 0 until tempList.size) {
+            if (list[i] == elem) {
+                indicesList.add(i)
+            }
+            if (indicesList.size > 1) {
+                if (list[indicesList[0]] + list[indicesList[1]] == number) {
+                    return Pair(first = indicesList[0], second = indicesList[1])
+                }
+            }
+        }
+        tempList.replaceAll { it + elem }
+        var tempList2 = tempList.filter { it == number && list.indexOf(it - elem) != list.indexOf(elem) }
+        if (tempList2.isNotEmpty()) {
+            val scndElem = tempList2[0]
+            val fstInd = list.indexOf(elem)
+            val scndInd = tempList.indexOf(scndElem)
+            return Pair(first = fstInd, second = scndInd)
+        }
+    }
+    return Pair(first = -1, second = -1)
+}
 
 /**
  * Очень сложная

@@ -156,7 +156,23 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    var maxFoodCost = 0f
+    var maxFoodName = ""
+    var entries = description.split("; ")
+    if (entries.size == 0) return ""
+    for (entry in entries) {
+        var foodNVal = entry.split(" ")
+        if (foodNVal.size < 2) return ""
+        var foodName = foodNVal[0]
+        var foodCost = foodNVal[1].toFloat()
+        if (foodCost >= maxFoodCost) {
+            maxFoodCost = foodCost
+            maxFoodName = foodName
+        }
+    }
+    return maxFoodName
+}
 
 /**
  * Сложная
@@ -169,7 +185,46 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    val map = mutableMapOf<Int, String>()
+    var number = 0
+    map[1000] = "M"
+    map[900] = "CM"
+    map[500] = "D"
+    map[400] = "CD"
+    map[100] = "C"
+    map[90] = "XC"
+    map[50] = "L"
+    map[40] = "XL"
+    map[10] = "X"
+    map[9] = "IX"
+    map[5] = "V"
+    map[4] = "IV"
+    map[1] = "I"
+    var skipNext = false
+    for (i in 0 until roman.length) {
+        if (!skipNext) {
+            val currChar = roman[i].toString()
+            val nextChar = if (i == roman.length - 1) -1 else roman[i + 1].toString()
+            val combined = if (nextChar == -1) currChar else currChar + nextChar
+            val keyComb = map.filterValues { it == combined }.keys
+            if (keyComb.isNotEmpty()) {
+                number += keyComb.elementAt(0)
+                skipNext = true
+            } else {
+                val keyOne = map.filterValues { it == currChar }.keys
+                if (keyOne.isNotEmpty()) {
+                    number += keyOne.elementAt(0)
+                } else {
+                    return -1
+                }
+            }
+        } else {
+            skipNext = false
+        }
+    }
+    return number;
+}
 
 /**
  * Очень сложная
