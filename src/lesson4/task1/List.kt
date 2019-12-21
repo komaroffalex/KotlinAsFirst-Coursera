@@ -139,9 +139,9 @@ fun center(list: MutableList<Double>): MutableList<Double> = TODO()
  *
  * Найти скалярное произведение двух векторов равной размерности,
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
- * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
+ * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.
  */
-fun times(a: List<Double>, b: List<Double>): Double = TODO()
+fun times(a: List<Int>, b: List<Int>): Int = TODO()
 
 /**
  * Средняя
@@ -149,9 +149,9 @@ fun times(a: List<Double>, b: List<Double>): Double = TODO()
  * Рассчитать значение многочлена при заданном x:
  * p(x) = p0 + p1*x + p2*x^2 + p3*x^3 + ... + pN*x^N.
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
- * Значение пустого многочлена равно 0.0 при любом x.
+ * Значение пустого многочлена равно 0 при любом x.
  */
-fun polynom(p: List<Double>, x: Double): Double = TODO()
+fun polynom(p: List<Int>, x: Int): Int = TODO()
 
 /**
  * Средняя
@@ -163,7 +163,7 @@ fun polynom(p: List<Double>, x: Double): Double = TODO()
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Double>): MutableList<Double> = TODO()
+fun accumulate(list: MutableList<Int>): MutableList<Int> = TODO()
 
 /**
  * Средняя
@@ -199,6 +199,9 @@ fun convert(n: Int, base: Int): List<Int> = TODO()
  * Результат перевода вернуть в виде строки, цифры более 9 представлять латинскими
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
+ *
+ * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
+ * (например, n.toString(base) и подобные), запрещается.
  */
 fun convertToString(n: Int, base: Int): String = TODO()
 
@@ -219,6 +222,9 @@ fun decimal(digits: List<Int>, base: Int): Int = TODO()
  * Цифры более 9 представляются латинскими строчными буквами:
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
+ *
+ * Использовать функции стандартной библиотеки, напрямую и полностью решающие данную задачу
+ * (например, str.toInt(base)), запрещается.
  */
 fun decimalFromString(str: String, base: Int): Int {
     var retVal = 0
@@ -241,19 +247,6 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun Map<Int, String>.floorKey(n: Int): Int {
-    return if (n == 0) 1
-    else {
-        var closestKey = 1
-        for ((k, v) in this) {
-            if (k in closestKey..n) {
-                closestKey = k
-            }
-        }
-        closestKey
-    }
-}
-
 fun roman(n: Int): String {
     val map = mutableMapOf<Int, String>()
     map[1000] = "M"
@@ -269,7 +262,13 @@ fun roman(n: Int): String {
     map[5] = "V"
     map[4] = "IV"
     map[1] = "I"
-    val l = map.floorKey(n)
+    var closestKey = 1
+    for ((k, v) in map) {
+        if (k in closestKey..n) {
+            closestKey = k
+        }
+    }
+    val l = closestKey
     return if (n == l) {
         map.getOrElse(n) { "" }
     } else map[l] + roman(n - l)
