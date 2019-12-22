@@ -2,6 +2,7 @@
 
 package lesson7.task1
 
+import lesson8.task1.lineBySegment
 import java.io.File
 
 /**
@@ -257,7 +258,122 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    var stringBuilder = StringBuilder()
+    val outputStream = File(outputName).bufferedWriter()
+    var textBegan = false
+    stringBuilder.append("<html>")
+    stringBuilder.append("\n")
+    stringBuilder.append("\t<body>")
+    stringBuilder.append("\n")
+    var iOpened = false
+    var lastIOpenedInd = 0
+    var bOpened = false
+    var lastBOpenedInd = 0
+    var sOpened = false
+    var lastSOpenedInd = 0
+    var justClosedI = false
+    var justClosedB = false
+    var justClosedS = false
+    for (line in File(inputName).readLines()) {
+        if (line.isNotEmpty()) {
+            if (!textBegan) {
+                stringBuilder.append("\t\t<p>")
+                stringBuilder.append("\n")
+            }
+            textBegan = true
+            var ignoreNext = false
+            stringBuilder.append("\t\t\t")
+            for (i in 0 until line.length) {
+                if (!ignoreNext) {
+                    if (i + 1 != line.length) {
+                        if (line[i] == '*' && line[i + 1] == '*') {
+                            bOpened = !bOpened
+                            ignoreNext = true
+                            if (bOpened) {
+                                stringBuilder.append("<b>")
+                                lastBOpenedInd = stringBuilder.lastIndexOf("<b>")
+                            } else {
+                                stringBuilder.append("</b>")
+                                justClosedB = true
+                            }
+                        } else if (line[i] == '~' && line[i + 1] == '~') {
+                            sOpened = !sOpened
+                            ignoreNext = true
+                            if (sOpened) {
+                                stringBuilder.append("<s>")
+                                lastSOpenedInd = stringBuilder.lastIndexOf("<s>")
+                            } else {
+                                stringBuilder.append("</s>")
+                                justClosedS = true
+                            }
+                        } else if (line[i] == '*') {
+                            iOpened = !iOpened
+                            if (iOpened) {
+                                stringBuilder.append("<i>")
+                                lastIOpenedInd = stringBuilder.lastIndexOf("<i>")
+                            } else {
+                                stringBuilder.append("</i>")
+                                if (lastIOpenedInd < lastBOpenedInd) justClosedI = true
+                            }
+                        } else {
+                            if (justClosedI && bOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</b>")
+                                stringBuilder.append("<b>")
+                                justClosedI = false
+                                stringBuilder.append(line[i].toString())
+                            } else {
+                                stringBuilder.append(line[i].toString())
+                            }
+                        }
+                    } else {
+                        if (line[i] == '*') {
+                            iOpened = !iOpened
+                            if (iOpened) {
+                                stringBuilder.append("<i>")
+                                lastIOpenedInd = stringBuilder.lastIndexOf("<i>")
+                            } else {
+                                stringBuilder.append("</i>")
+                                if (lastIOpenedInd < lastBOpenedInd) justClosedI = true
+                            }
+                        } else {
+                            if (justClosedI && bOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</b>")
+                                stringBuilder.append("<b>")
+                                justClosedI = false
+                                stringBuilder.append(line[i].toString())
+                            } else {
+                                stringBuilder.append(line[i].toString())
+                            }
+                        }
+                    }
+                } else {
+                    ignoreNext = false
+                }
+            }
+            stringBuilder.append("\n")
+        } else if (textBegan) {
+            stringBuilder.append("\t\t</p>")
+            stringBuilder.append("\n")
+            textBegan = false
+        }
+    }
+    if (iOpened) {
+        stringBuilder.replace(lastIOpenedInd, lastIOpenedInd + 3, "*")
+    }
+    if (sOpened) {
+        stringBuilder.replace(lastSOpenedInd, lastSOpenedInd + 3, "~~")
+    }
+    if (bOpened) {
+        stringBuilder.replace(lastBOpenedInd, lastBOpenedInd + 3, "**")
+    }
+    stringBuilder.append("\t\t</p>")
+    stringBuilder.append("\n")
+    stringBuilder.append("\t</body>")
+    stringBuilder.append("\n")
+    stringBuilder.append("</html>")
+    //refactor
+    outputStream.write(stringBuilder.toString())
+    outputStream.close()
 }
 
 /**
