@@ -294,7 +294,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                                 lastBOpenedInd = stringBuilder.lastIndexOf("<b>")
                             } else {
                                 stringBuilder.append("</b>")
-                                justClosedB = true
+                                if (lastBOpenedInd < lastIOpenedInd || lastBOpenedInd < lastSOpenedInd) justClosedB = true
                             }
                         } else if (line[i] == '~' && line[i + 1] == '~') {
                             sOpened = !sOpened
@@ -304,7 +304,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                                 lastSOpenedInd = stringBuilder.lastIndexOf("<s>")
                             } else {
                                 stringBuilder.append("</s>")
-                                justClosedS = true
+                                if (lastSOpenedInd < lastIOpenedInd) justClosedS = true
                             }
                         } else if (line[i] == '*') {
                             iOpened = !iOpened
@@ -316,10 +316,30 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                                 if (lastIOpenedInd < lastBOpenedInd) justClosedI = true
                             }
                         } else {
-                            if (justClosedI && bOpened) {
+                            if (justClosedI && bOpened && sOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</b></s>")
+                                stringBuilder.append("<s><b>")
+                                justClosedI = false
+                                stringBuilder.append(line[i].toString())
+                            } else if (justClosedI && bOpened) {
                                 stringBuilder.insert(stringBuilder.length - 4, "</b>")
                                 stringBuilder.append("<b>")
                                 justClosedI = false
+                                stringBuilder.append(line[i].toString())
+                            } else if (justClosedB && iOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</i>")
+                                stringBuilder.append("<i>")
+                                justClosedB = false
+                                stringBuilder.append(line[i].toString())
+                            } else if (justClosedS && iOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</i>")
+                                stringBuilder.append("<i>")
+                                justClosedS = false
+                                stringBuilder.append(line[i].toString())
+                            } else if (justClosedB && sOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</s>")
+                                stringBuilder.append("<s>")
+                                justClosedB = false
                                 stringBuilder.append(line[i].toString())
                             } else {
                                 stringBuilder.append(line[i].toString())
@@ -336,10 +356,30 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                                 if (lastIOpenedInd < lastBOpenedInd) justClosedI = true
                             }
                         } else {
-                            if (justClosedI && bOpened) {
+                            if (justClosedI && bOpened && sOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</b></s>")
+                                stringBuilder.append("<s><b>")
+                                justClosedI = false
+                                stringBuilder.append(line[i].toString())
+                            } else if (justClosedI && bOpened) {
                                 stringBuilder.insert(stringBuilder.length - 4, "</b>")
                                 stringBuilder.append("<b>")
                                 justClosedI = false
+                                stringBuilder.append(line[i].toString())
+                            } else if (justClosedB && iOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</i>")
+                                stringBuilder.append("<i>")
+                                justClosedB = false
+                                stringBuilder.append(line[i].toString())
+                            } else if (justClosedS && iOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</i>")
+                                stringBuilder.append("<i>")
+                                justClosedS = false
+                                stringBuilder.append(line[i].toString())
+                            } else if (justClosedB && sOpened) {
+                                stringBuilder.insert(stringBuilder.length - 4, "</s>")
+                                stringBuilder.append("<s>")
+                                justClosedB = false
                                 stringBuilder.append(line[i].toString())
                             } else {
                                 stringBuilder.append(line[i].toString())
@@ -358,12 +398,15 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         }
     }
     if (iOpened) {
+        lastIOpenedInd = stringBuilder.lastIndexOf("<i>")
         stringBuilder.replace(lastIOpenedInd, lastIOpenedInd + 3, "*")
     }
     if (sOpened) {
+        lastSOpenedInd = stringBuilder.lastIndexOf("<s>")
         stringBuilder.replace(lastSOpenedInd, lastSOpenedInd + 3, "~~")
     }
     if (bOpened) {
+        lastBOpenedInd = stringBuilder.lastIndexOf("<b>")
         stringBuilder.replace(lastBOpenedInd, lastBOpenedInd + 3, "**")
     }
     stringBuilder.append("\t\t</p>")
